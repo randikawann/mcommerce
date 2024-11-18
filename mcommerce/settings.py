@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #! building app for DRF
     'rest_framework',
+    'rest_framework.authtoken',
+    #! projects apps
     'product',
 ]
 
