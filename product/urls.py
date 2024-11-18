@@ -1,6 +1,13 @@
 from django.urls import path, include
 from product import views
-from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetialedProductMixins, ListProductsGenerics, DetialedProductGenerics
+from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetialedProductMixins, ListProductsGenerics, DetialedProductGenerics, ProductViewSet
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+
+router.register(
+    'productviewset', ProductViewSet, basename='product'
+)
 
 urlpatterns = [
     path('productlist/', views.listproducts, name='ListProduct'),
@@ -11,4 +18,4 @@ urlpatterns = [
     path('productgenericslist/', ListProductsGenerics.as_view(), name='listProductsGenerics'),
     path('productgenericsDetail/<int:pk>', DetialedProductGenerics.as_view(), name='productDetailsGenerics'),
     path('special/<int:pk>', views.SpecialProductGenerics.as_view(), name='specialDetailsGenerics'),
-]
+] + router.urls
