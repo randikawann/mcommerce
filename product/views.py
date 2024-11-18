@@ -21,3 +21,10 @@ class ListProducts(APIView):
         query = Product.objects.all()
         serializer_class = ProductSerializer(query, many=True)
         return Response(serializer_class.data)
+
+
+class ProductDetailedView(APIView):
+    def get(self, request, pid):
+        query = Product.objects.filter(product_id = pid)
+        serializer_class = ProductSerializer(query, many=True)
+        return Response(serializer_class.data)
