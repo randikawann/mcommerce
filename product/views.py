@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, mixins, generics
 
 # Create your views here.
 
@@ -48,3 +48,32 @@ class ProductDetailedView(APIView):
     def delete(self, request, pid):
         product_obj = Product.objects.filter(product_id = pid).delete()
         return Response({"success": "Product deleted successfully"}, status=status.HTTP_200_OK)
+
+
+class ListProductsMixins(mixins.ListModelMixin, generics.GenericAPIView):
+
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class DetialedProductMixins(mixins.RetrieveModelMixin,
+                            mixins.UpdateModelMixin,
+                            mixins.CreateModelMixin,
+                            mixins.DestroyModelMixin,
+                            generics.GenericAPIView,
+                            ):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def post(self, request, *args,  **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
