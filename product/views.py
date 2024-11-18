@@ -36,3 +36,11 @@ class ProductDetailedView(APIView):
         query = Product.objects.filter(product_id = pid)
         serializer_class = ProductSerializer(query, many=True)
         return Response(serializer_class.data)
+
+    def put(self, request, pid):
+        product_obj = Product.objects.get(product_id = pid)
+        serializer_obj = ProductSerializer(product_obj, data = request.data)
+        if serializer_obj.is_valid(raise_exception = True):
+            product_saved = serializer_obj.save()
+            return Response({"success": "Product {} updated successfully".format(product_saved.name)}, status=status.HTTP_200_OK)
+        return Response(serializer_obj.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
