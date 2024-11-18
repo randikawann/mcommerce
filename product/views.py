@@ -77,3 +77,21 @@ class DetialedProductMixins(mixins.RetrieveModelMixin,
     
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+class ListProductsGenerics(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class DetialedProductGenerics(generics.RetrieveAPIView,
+                            generics.UpdateAPIView,
+                            generics.DestroyAPIView,
+
+                            ):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class SpecialProductGenerics(generics.ListAPIView,
+                            generics.RetrieveUpdateDestroyAPIView
+                            ):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
