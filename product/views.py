@@ -44,3 +44,7 @@ class ProductDetailedView(APIView):
             product_saved = serializer_obj.save()
             return Response({"success": "Product {} updated successfully".format(product_saved.name)}, status=status.HTTP_200_OK)
         return Response(serializer_obj.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, pid):
+        product_obj = Product.objects.filter(product_id = pid).delete()
+        return Response({"success": "Product deleted successfully"}, status=status.HTTP_200_OK)
