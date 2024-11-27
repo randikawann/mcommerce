@@ -13,6 +13,7 @@ router.register(
 
 urlpatterns = [
 
+    # Admin JWT token CREATED
     path('api/register/', UserCreateView.as_view(), name='user_create'),
     # Admin JWT token endpoints
     path('api/token/admin/', TokenObtainPairView.as_view(), name='admin_token_obtain'),

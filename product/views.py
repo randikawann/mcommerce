@@ -11,35 +11,25 @@ from rest_framework.authentication import TokenAuthentication
 from .permissions import IsAdminUserJWT
 from .permissions import IsCommonUserJWT
 from django.contrib.auth.models import User
-import random
-import string
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your views here.
 
 class GuestUserView(APIView):
-    """
-    Creates a unique guest user and generates an authentication token.
-    """
     def post(self, request):
-        # Set the fixed guest username and password
         username = "guest"
-        password = "guest@123"  # Shared password for guest users
+        password = "guest@123" 
         
-        # Check if the guest user already exists
         user, created = User.objects.get_or_create(username=username, defaults={"is_staff": False})
         if created:
             user.set_password(password)
             user.save()
 
-        # Generate JWT tokens for the guest user
         refresh = RefreshToken.for_user(user)
-
-        # Return the tokens and user details
         return Response({
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh),
-        }, status=status.HTTP_201_CREATED)
+        }, status=status.HTTP_200_OK)
 
 class UserCreateView(APIView):
     def post(self, request):
