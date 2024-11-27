@@ -106,10 +106,7 @@ DATABASES = {
     }
 }
 database_url = os.environ.get("DATABASE_URL")
-# DATABASES['default'] = dj_database_url.parse(database_url)
-
-#postgresql://mcommerce_django_render_user:SskduT8Jv7qa4q03ATf8NLAVgaQqKnXX@dpg-ct3efv3tq21c738r4avg-a.oregon-postgres.render.com/mcommerce_django_render
-
+DATABASES['default'] = dj_database_url.parse(database_url)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
