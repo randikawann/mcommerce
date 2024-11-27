@@ -10,7 +10,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductCategory
-        fields = ['id', 'category_name', 'category_id']
+        fields =  '__all__'
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
