@@ -1,7 +1,9 @@
 from django.urls import path, include
 from product import views
-from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetialedProductMixins, ListProductsGenerics, DetialedProductGenerics, ProductViewSet
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetialedProductMixins, ListProductsGenerics, DetialedProductGenerics, ProductViewSet
+from product.views import AdminOnlyView, CommonUserView, SharedView, UserCreateView
 
 router = DefaultRouter()
 
@@ -10,6 +12,18 @@ router.register(
 )
 
 urlpatterns = [
+
+    path('api/register/', UserCreateView.as_view(), name='user_create'),
+    # Admin JWT token endpoints
+    path('api/token/admin/', TokenObtainPairView.as_view(), name='admin_token_obtain'),
+    path('api/token/admin/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # Protected APIs
+    path('api/admin/', AdminOnlyView.as_view(), name='admin_only'),
+    path('api/common/', CommonUserView.as_view(), name='common_user'),
+    path('api/shared/', SharedView.as_view(), name='shared_api'),
+
+    # old urls
     path('productlist/', views.listproducts, name='ListProduct'),
     path('classproductlist/', ListProducts.as_view(), name='Listproduct'),
     path('classproductlist/<int:pid>', ProductDetailedView.as_view(), name='detailedProduct'),

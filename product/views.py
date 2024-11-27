@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Product
-from .serializer import ProductSerializer
+from .serializer import ProductSerializer, UserCreateSerializer
 from product import serializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -8,8 +8,43 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status, mixins, generics, viewsets
 from rest_framework.authentication import TokenAuthentication
+from .permissions import IsAdminUserJWT
+from .permissions import IsCommonUserJWT
 
 # Create your views here.
+
+class UserCreateView(APIView):
+    def post(self, request):
+        serializer = UserCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "User created successfully!"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AdminOnlyView(APIView):
+    permission_classes = [IsAdminUserJWT]
+
+    def get(self, request):
+        return Response({"message": "Welcome, Admin!"})
+
+class CommonUserView(APIView):
+    permission_classes = [IsCommonUserJWT]
+
+    def get(self, request):
+        return Response({"message": "Welcome, Common User!"})
+
+
+class SharedView(APIView):
+    def get(self, request):
+        auth = request.headers.get('Authorization', '')
+        if 'Bearer your_common_token' in auth:  # Common token
+            return Response({"message": "Hello, Common User!"})
+        elif request.user and request.user.is_authenticated and request.user.is_staff:
+            return Response({"message": "Hello, Admin!"})
+        return Response({"message": "Unauthorized!"}, status=403)
+
+# OLD Code below
+
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
@@ -113,7 +148,7 @@ class SpecialProductGenerics(generics.ListAPIView,
                             ):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    
+
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
