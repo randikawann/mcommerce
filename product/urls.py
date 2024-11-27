@@ -2,7 +2,7 @@ from django.urls import path, include
 from product import views
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetialedProductMixins, ListProductsGenerics, DetialedProductGenerics, ProductViewSet
+from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetialedProductMixins, ListProductsGenerics, DetialedProductGenerics, ProductViewSet, CategoryDetailedView
 from product.views import AdminOnlyView, CommonUserView, SharedView, UserCreateView, GuestUserView
 
 router = DefaultRouter()
@@ -26,6 +26,10 @@ urlpatterns = [
     path('api/admin/', AdminOnlyView.as_view(), name='admin_only'),
     path('api/common/', CommonUserView.as_view(), name='common_user'),
     path('api/shared/', SharedView.as_view(), name='shared_api'),
+
+    # old urls
+    path('categories/', CategoryDetailedView.as_view()),
+    path('categories/<int:pk>/', CategoryDetailedView.as_view()),
 
     # old urls
     path('productlist/', views.listproducts, name='ListProduct'),
