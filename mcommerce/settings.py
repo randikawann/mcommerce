@@ -59,6 +59,8 @@ SIMPLE_JWT = {
     'SIGNING_KEY': 'RanSecretKey_forAll10915',  # Use Django SECRET_KEY or generate a new one
     'ALGORITHM': 'HS256',
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
 }
 
 MIDDLEWARE = [

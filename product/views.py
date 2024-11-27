@@ -10,8 +10,40 @@ from rest_framework import status, mixins, generics, viewsets
 from rest_framework.authentication import TokenAuthentication
 from .permissions import IsAdminUserJWT
 from .permissions import IsCommonUserJWT
+from django.contrib.auth.models import User
+import random
+import string
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your views here.
+
+class GuestUserView(APIView):
+    """
+    Creates a unique guest user and generates an authentication token.
+    """
+    def post(self, request):
+        # Generate a unique username for the guest user
+        username = f"guest_{''.join(random.choices(string.ascii_lowercase + string.digits, k=8))}"
+        password = "common_guest_password"  # Shared password for guest users
+        
+        # Extract and validate `is_staff` from request data
+        is_staff = request.data.get('is_staff', False)  # Default to False
+        if not isinstance(is_staff, bool):
+            return Response({"error": "`is_staff` must be a boolean value."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create the guest user
+        user = User.objects.create_user(username=username, password=password)
+        user.is_staff = is_staff
+        user.save()
+
+        # Generate JWT tokens for the user
+        refresh = RefreshToken.for_user(user)
+
+        # Return the tokens and user details
+        return Response({
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh),
+        }, status=status.HTTP_201_CREATED)
 
 class UserCreateView(APIView):
     def post(self, request):
@@ -36,12 +68,14 @@ class CommonUserView(APIView):
 
 class SharedView(APIView):
     def get(self, request):
-        auth = request.headers.get('Authorization', '')
-        if 'Bearer your_common_token' in auth:  # Common token
-            return Response({"message": "Hello, Common User!"})
-        elif request.user and request.user.is_authenticated and request.user.is_staff:
-            return Response({"message": "Hello, Admin!"})
+        if request.user and request.user.is_authenticated:
+            if request.user.is_staff:
+                return Response({"message": "Hello, Admin!"})
+            else:
+                return Response({"message": "Hello, Common User!"})
         return Response({"message": "Unauthorized!"}, status=403)
+
+
 
 # OLD Code below
 

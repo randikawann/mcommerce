@@ -3,7 +3,7 @@ from product import views
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from product.views import ListProducts, ProductDetailedView, ListProductsMixins, DetialedProductMixins, ListProductsGenerics, DetialedProductGenerics, ProductViewSet
-from product.views import AdminOnlyView, CommonUserView, SharedView, UserCreateView
+from product.views import AdminOnlyView, CommonUserView, SharedView, UserCreateView, GuestUserView
 
 router = DefaultRouter()
 
@@ -17,6 +17,9 @@ urlpatterns = [
     # Admin JWT token endpoints
     path('api/token/admin/', TokenObtainPairView.as_view(), name='admin_token_obtain'),
     path('api/token/admin/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    path('api/token/', GuestUserView.as_view(), name='guest_token'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh_guest'),
 
     # Protected APIs
     path('api/admin/', AdminOnlyView.as_view(), name='admin_only'),
