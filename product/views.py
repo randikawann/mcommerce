@@ -67,16 +67,14 @@ class SharedView(APIView):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsCommonUserJWT])
 def listproducts(request):
     query = Product.objects.all()
     serializer_class = ProductSerializer(query, many=True)
     return Response(serializer_class.data)
 
 class ListProducts(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCommonUserJWT]
 
     def get(self, request):
         query = Product.objects.all()
@@ -92,8 +90,7 @@ class ListProducts(APIView):
 
 
 class ProductDetailedView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCommonUserJWT]
 
     def get(self, request, pid):
         query = Product.objects.filter(product_id = pid)
@@ -114,9 +111,7 @@ class ProductDetailedView(APIView):
 
 
 class ListProductsMixins(mixins.ListModelMixin, generics.GenericAPIView):
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCommonUserJWT]
 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -129,8 +124,7 @@ class DetialedProductMixins(mixins.RetrieveModelMixin,
                             mixins.DestroyModelMixin,
                             generics.GenericAPIView,
                             ):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCommonUserJWT]
 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
