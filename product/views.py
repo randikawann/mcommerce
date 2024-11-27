@@ -22,21 +22,17 @@ class GuestUserView(APIView):
     Creates a unique guest user and generates an authentication token.
     """
     def post(self, request):
-        # Generate a unique username for the guest user
-        username = f"guest_{''.join(random.choices(string.ascii_lowercase + string.digits, k=8))}"
-        password = "common_guest_password"  # Shared password for guest users
+        # Set the fixed guest username and password
+        username = "guest"
+        password = "guest@123"  # Shared password for guest users
         
-        # Extract and validate `is_staff` from request data
-        is_staff = request.data.get('is_staff', False)  # Default to False
-        if not isinstance(is_staff, bool):
-            return Response({"error": "`is_staff` must be a boolean value."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Create the guest user
-        user = User.objects.create_user(username=username, password=password)
-        user.is_staff = is_staff
-        user.save()
+        # Check if the guest user already exists
+        user, created = User.objects.get_or_create(username=username, defaults={"is_staff": False})
+        if created:
+            user.set_password(password)
+            user.save()
 
-        # Generate JWT tokens for the user
+        # Generate JWT tokens for the guest user
         refresh = RefreshToken.for_user(user)
 
         # Return the tokens and user details
